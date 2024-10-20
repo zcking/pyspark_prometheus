@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.log
+*.jar
+data/
+notebooks/
+venv/
+dist/
+.pytest_cache/
+.coverage
+coverage/
