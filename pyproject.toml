@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "pyspark-prometheus"
-version = "0.1.2"
-description = ""
+version = "0.1.3"
+description = "Prometheus instrumentation for Spark Streaming metrics."
 authors = ["Zachary King <zach@makewithdata.tech>"]
 readme = "README.md"
+license = "MIT"
+repository = "https://github.com/zcking/pyspark_prometheus"
+keywords = ["prometheus", "spark", "streaming", "metrics"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
