@@ -28,7 +28,7 @@ pip install -r requirements.txt
 
     ```python
     spark = SparkSession.builder.master("local").appName("MySparkApp").getOrCreate()
-    spark = with_prometheus_metrics(spark)
+    spark = with_prometheus_metrics(spark, 'http://localhost:9091')
     ```
 
 3. Start your PySpark job as usual. Metrics will be collected and exposed automatically.

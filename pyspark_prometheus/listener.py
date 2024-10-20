@@ -9,6 +9,7 @@ from prometheus_client import (
 
 from pyspark.sql import SparkSession
 from pyspark.sql.streaming.listener import (
+    QueryIdleEvent,
     QueryStartedEvent,
     QueryProgressEvent,
     QueryTerminatedEvent,
@@ -158,6 +159,14 @@ class PrometheusStreamingQueryListener(StreamingQueryListener):
             registry=self.registry,
             timeout=5.0,
         )
+    
+    def onQueryIdle(self, event: QueryIdleEvent) -> None:
+        """
+        Callback method that is called when a streaming query is idle.
+        
+        :param event: The QueryIdleEvent object that contains the query information.
+        """
+        return super().onQueryIdle(event)
 
     def onQueryTerminated(self, event: "QueryTerminatedEvent") -> None:
         """
