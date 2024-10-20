@@ -1,6 +1,8 @@
-# PySpark Prometheus Integration
+# Spark Streaming Metrics Prometheus Instrumentation
 
-This project provides a seamless integration between PySpark and Prometheus for monitoring Spark Structured Streaming applications.
+This project provides a seamless integration between PySpark and Prometheus for monitoring Spark **Structured Streaming** applications.
+
+> *Note:* this project focuses on better metrics for Spark Structured Streaming specifically. If you would like other Spark metrics such as executor memory, CPU, GC times, etc. in Prometheus please refer to Spark's monitoring guide and its support for Prometheus using JMX (Java Management Extensions).
 
 ## Features
 

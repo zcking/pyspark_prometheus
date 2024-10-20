@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyspark-prometheus"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["Zachary King <zach@makewithdata.tech>"]
 readme = "README.md"
@@ -15,6 +15,7 @@ prometheus-client = ">=0.21.0"
 pytest = "^8.3.3"
 pytest-cov = "^5.0.0"
 responses = "^0.25.3"
+pytest-mock = "^3.14.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -24,5 +25,9 @@ build-backend = "poetry.core.masonry.api"
 testpaths = [
     "tests"
 ]
-addopts = "--capture=no --strict-markers --cov=pyspark_prometheus --cov-report=html:coverage"
-
+addopts = "--strict-markers --cov=pyspark_prometheus --cov-report=html:coverage -m 'not integration'"
+# To run integration tests, `poetry run pytest -m 'integration'`
+# To prevent output from being swalled during tests, `poetry run pytest --capture=no
+markers = [
+    "integration: marks integration tests",
+]

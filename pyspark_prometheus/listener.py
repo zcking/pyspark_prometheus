@@ -1,10 +1,10 @@
 from pyspark.sql.streaming import StreamingQueryListener
+import prometheus_client
 from prometheus_client import (
     CollectorRegistry,
     Histogram,
     Counter,
     Gauge,
-    push_to_gateway,
 )
 
 from pyspark.sql import SparkSession
@@ -118,7 +118,7 @@ class PrometheusStreamingQueryListener(StreamingQueryListener):
         self.active_queries.labels(app_name=self.app_name).set(self._num_active_queries)
         self._query_names[event.id] = event.name if event.name else event.id
 
-        push_to_gateway(
+        prometheus_client.push_to_gateway(
             self.push_gateway_url,
             job=self.job_name,
             registry=self.registry,
@@ -153,7 +153,7 @@ class PrometheusStreamingQueryListener(StreamingQueryListener):
         )
 
         # Push metrics to Prometheus Pushgateway
-        push_to_gateway(
+        prometheus_client.push_to_gateway(
             self.push_gateway_url,
             job=self.job_name,
             registry=self.registry,
@@ -183,7 +183,7 @@ class PrometheusStreamingQueryListener(StreamingQueryListener):
             app_name=self.app_name, query_name=self._query_names[event.id]
         ).inc()
 
-        push_to_gateway(
+        prometheus_client.push_to_gateway(
             self.push_gateway_url,
             job=self.job_name,
             registry=self.registry,

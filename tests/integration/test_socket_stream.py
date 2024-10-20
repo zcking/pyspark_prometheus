@@ -1,11 +1,14 @@
 import threading
 import socket
 import time
+import subprocess
 from pyspark.sql import SparkSession, DataFrame
-from pyspark_prometheus.listener import PrometheusStreamingQueryListener, with_prometheus_metrics
+from pyspark_prometheus.listener import (
+    with_prometheus_metrics,
+)
 
 import pytest
-import responses
+from unittest.mock import Mock
 
 
 @pytest.fixture(scope="module")
@@ -13,6 +16,25 @@ def spark():
     spark = SparkSession.builder.master("local").appName("TestApp").getOrCreate()
     yield spark
     spark.stop()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def docker_compose_prometheus():
+    """
+    Fixture that starts the Prometheus and Pushgateway services using Docker Compose.
+    Stops the services after the tests are done.
+    """
+    # Start the services
+    subprocess.run(["docker-compose", "up", "-d"], check=True)
+
+    # Wait for the services to start
+    # TODO: Replace with a more robust health check
+    time.sleep(3)
+
+    yield  # Test code runs here
+
+    # Stop the services
+    subprocess.run(["docker-compose", "down"], check=True)
 
 
 def start_socket_server(
@@ -51,16 +73,9 @@ def start_socket_server(
     return thread
 
 
-# @responses.activate
-def test_listener_initialization(spark):
-    # Mock the Pushgateway endpoint
-    # responses.add(
-    #     responses.PUT,
-    #     "http://localhost:9091/metrics/job/pyspark_socket_stream",
-    #     status=200,
-    # )
-
-    spark = with_prometheus_metrics(spark, 'http://localhost:9091')
+@pytest.mark.integration
+def test_simple_socket_to_console(spark, mocker):
+    spark = with_prometheus_metrics(spark, "http://localhost:9091")
 
     # Start the dummy server
     start_socket_server(
@@ -83,11 +98,3 @@ def test_listener_initialization(spark):
     # Stop the query
     if not query.awaitTermination(10):
         query.stop()
-
-    # # Verify that the metrics were pushed to the Pushgateway
-    # assert len(responses.calls) > 0
-    # assert (
-    #     responses.calls[0].request.url
-    #     == "http://localhost:9091/metrics/job/pyspark_socket_stream"
-    # )
-    # assert responses.calls[0].response.status_code == 200
